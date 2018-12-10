@@ -1,36 +1,45 @@
+/* eslint-disable func-names */
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 
 /**
  * @typedef BrowserClientSettings
  * @type {object}
- * @property {Window.storage} storage - Storage for holds the session token.
- * @property {string} sessionkey - A string.
+ * @property {any} fetch - Implementation of Fetch API.
  */
 
 /**
- * Creates a browser instance of GCrypt's client.
+ * Creates a client instance of GCrypt.
  *
- * @param {string} target An URL formatted string.
- * @param {BrowserClientSettings} settings Additional settings about client.
+ * @param {string!} target An URL formatted string.
+ * @param {BrowserClientSettings?} settings Additional settings about client.
  */
 function BrowserClient(target, settings) {
+  if (target == null) {
+    throw new Error('target address is required');
+  }
+
+  if (typeof target !== 'string') {
+    throw new Error('target address should be a string');
+  }
+
   this.target = target;
 
-  this.settings = settings != null ? settings : {
-    storage: window.localStorage,
-    key: 'gcrypt-token',
+  const newSettings = settings != null ? settings : {};
 
-    fetch: window.fetch,
-  };
+  this.fetch = newSettings.fetch != null ? newSettings.fetch : window.fetch;
 }
 
 /**
- * Checks whether the remote server is working or not. If successful returns.
+ * Checks whether the remote server is working or not.
+ *
+ * @async
+ * @function health
+ * @returns {Promise<boolean>} A promise of a boolean value related to the
+ * server status.
  */
-BrowserClient.prototype.health = () => {
-  const request = new Request(`${this.address}/health`);
-
-  return this.settings.fetch(request);
+BrowserClient.prototype.health = function () {
+  return this.fetch(new Request(`${this.target}/health`))
+    .then(response => response.ok);
 };
 
 export default BrowserClient;
