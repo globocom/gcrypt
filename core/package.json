@@ -17,7 +17,8 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jest": "^22.1.2",
     "jest": "^23.6.0",
-    "jest-fetch-mock": "^2.0.1"
+    "jest-fetch-mock": "^2.0.1",
+    "jsdoc": "^3.5.5"
   },
   "scripts": {
     "test": "jest --browser --coverage"
