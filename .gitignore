@@ -77,3 +77,9 @@ typings/
 
 #DynamoDB Local files 
 .dynamodb/ 
+
+# VS Code directory
+.vscode/
+
+# macOS temporary files
+.DS_Store
