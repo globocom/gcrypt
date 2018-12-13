@@ -145,4 +145,32 @@ BrowserClient.prototype.login = function (credential) {
     });
 };
 
+/**
+ * Performs a log out of session on the remote server. If successful returns a
+ * true value and clear the session storage, otherwise returns false and keep
+ * intact the session storage.
+ *
+ * @async
+ * @method
+ * @return {Promise<boolean>} A promise of a boolean type.
+ */
+BrowserClient.prototype.logout = function () {
+  const token = this.sessionStorage.retrieve();
+
+  if (token == null) return Promise.reject(new Error('there is no session active currently'));
+
+  const request = new Request(`${this.target}/auth/logout`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return this.fetch(request).then((response) => {
+    const loggedOut = response.ok;
+    if (loggedOut) this.sessionStorage.clear();
+    return loggedOut;
+  });
+};
+
 export { BrowserClient, BrowserSessionStorage };

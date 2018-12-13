@@ -140,6 +140,46 @@ describe('BrowserClient', () => {
       });
     });
   });
+
+  describe('logout', () => {
+    it('When has no session active, should reject and return an expected error', () => {
+      expect(client.logout()).rejects.toThrowError('there is no session active currently');
+    });
+
+    it('When logout is successful, should clear the session storage', () => {
+      fetch.once('OK');
+
+      const token = 'another-jwt-token';
+      client.sessionStorage.save(token);
+
+      return client.logout().then((loggedOut) => {
+        expect(loggedOut).toStrictEqual(true);
+
+        expect(fetch).toHaveBeenCalled();
+        const request = fetch.mock.calls[0][0];
+        expect(request.method).toStrictEqual('POST');
+        expect(new URL(request.url).pathname)
+          .toStrictEqual('/auth/logout');
+        expect(request.headers.get('Authorization'))
+          .toStrictEqual(`Bearer ${token}`);
+
+        return expect(client.sessionStorage.retrieve()).toStrictEqual(null);
+      });
+    });
+
+    it('When logout is unsuccessful, should keep the token into browser storage', () => {
+      fetch.once('bad gateway', { status: 502 });
+
+      const token = 'another-jwt-token';
+      client.sessionStorage.save(token);
+
+      return client.logout().then((loggedOut) => {
+        expect(loggedOut).toStrictEqual(false);
+        return expect(client.sessionStorage.retrieve())
+          .toStrictEqual(token);
+      });
+    });
+  });
 });
 
 describe('BrowserSessionStorage', () => {
