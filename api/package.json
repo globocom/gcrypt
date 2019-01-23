@@ -1,0 +1,28 @@
+{
+  "name": "@globocom/gcrypt-api",
+  "version": "0.1.0",
+  "description": "The web API of GCrypt.",
+  "repository": "https://github.com/globocom/gcrypt.git",
+  "author": "CSIRT.globo",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.19.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.2.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0",
+    "eslint-plugin-jest": "^22.1.3",
+    "jest": "^23.6.0"
+  },
+  "scripts": {
+    "lint": "eslint ./",
+    "test": "jest --coverage --verbose --env node"
+  }
+}
