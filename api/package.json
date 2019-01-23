@@ -22,7 +22,7 @@
     "jest": "^23.6.0"
   },
   "scripts": {
-    "lint": "eslint ./",
+    "lint": "eslint ./src",
     "test": "jest --coverage --verbose --env node"
   }
 }
