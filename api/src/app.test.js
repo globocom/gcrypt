@@ -1,4 +1,4 @@
-import App from '../app';
+import App from './app';
 
 describe('App', () => {
   const originalEnvs = Object.assign({}, process.env);
