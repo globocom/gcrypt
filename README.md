@@ -1,6 +1,6 @@
 <img src="images/gcrypt-logo.png" align="right" height="35" />
 
-# GCrypt
+# GCrypt [![Build Status](https://travis-ci.org/globocom/gcrypt.svg?branch=master)](https://travis-ci.org/globocom/gcrypt)
 
 GCrypt is an open source tool that helps organizations mitigate sensitive data exposure in files by providing an user-friendly web application to encrypt/decrypt them.
 
@@ -23,8 +23,8 @@ To contribute, open an issue or an MR with 'work in progress' (WIP) status.
 
 ## Documentation
 
-Check our (wiki)[https://github.com/globocom/gcrypt/wiki].
+Check our [wiki](https://github.com/globocom/gcrypt/wiki).
 
 ## License
 
-This project is licensed under the BSD 3-Clause "New" or "Revised" License - read [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - read [LICENSE.md](LICENSE.md) file for details.
