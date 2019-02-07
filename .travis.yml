@@ -3,19 +3,24 @@ node_js:
   - "node"
 install:
   - |
+    cd "${JOB}"
     if [[ "${JOB}" == "api" ]]; then
-        cd ./api
         yarn install
     fi
+    cd -
 script:
   - |
+    cd "${JOB}"
     if [[ "${JOB}" == "api" ]]; then
-      cd ./api
-      yarn run lint
-      yarn test
-      yarn run build
+        yarn run lint
+        yarn test
+        yarn run build
+    elif [[ "${JOB}" == "core" ]]; then
+        yarn test
     fi
+    cd -
 env:
   matrix:
     - JOB=api
+    - JOB=core
 cache: yarn
