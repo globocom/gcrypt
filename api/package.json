@@ -24,7 +24,9 @@
     "tmp": "^0.0.33"
   },
   "scripts": {
+    "build": "rm -rf ./dist && babel ./src --out-dir dist/ --copy-files",
     "lint": "eslint ./src",
+    "start": "npm run build && node ./dist/index.js",
     "test": "jest --coverage --verbose --env node"
   }
 }
