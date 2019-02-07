@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - "node"
+install:
+  - |
+    if [[ "${JOB}" == "api" ]]; then
+        cd ./api
+        yarn install
+    fi
+script:
+  - |
+    if [[ "${JOB}" == "api" ]]; then
+      cd ./api
+      yarn run lint
+      yarn test
+      yarn run build
+    fi
+env:
+  matrix:
+    - JOB=api
+cache: yarn
