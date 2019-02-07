@@ -25,8 +25,9 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && babel ./src --out-dir dist/ --copy-files",
+    "ci": "yarn run lint && yarn test && yarn run build",
     "lint": "eslint ./src",
     "start": "npm run build && node ./dist/index.js",
-    "test": "jest --coverage --verbose --env node"
+    "test": "jest --coverage --verbose --env node ./src"
   }
 }

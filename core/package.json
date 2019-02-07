@@ -21,7 +21,8 @@
     "jsdoc": "^3.5.5"
   },
   "scripts": {
-    "test": "jest --browser --coverage"
+    "ci": "yarn run test",
+    "test": "jest --browser --coverage --verbose"
   },
   "browser": {
     "./src/index.js": "./src/browser.js"

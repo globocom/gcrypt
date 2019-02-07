@@ -2,18 +2,7 @@ language: node_js
 node_js:
   - "node"
 install: yarn --cwd "${PACKAGE}" install
-script:
-  - |
-    set -euo pipefail
-    cd "${PACKAGE}"
-    if [[ "${PACKAGE}" == "api" ]]; then
-        yarn run lint
-        yarn test
-        yarn run build
-    elif [[ "${PACKAGE}" == "core" ]]; then
-        yarn test
-    fi
-    cd -
+script: yarn --cwd "${PACKAGE}" run ci
 env:
   matrix:
     - PACKAGE=api
