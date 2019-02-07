@@ -1,26 +1,21 @@
 language: node_js
 node_js:
   - "node"
-install:
-  - |
-    cd "${JOB}"
-    if [[ "${JOB}" == "api" ]]; then
-        yarn install
-    fi
-    cd -
+install: yarn --cwd "${PACKAGE}" install
 script:
   - |
-    cd "${JOB}"
-    if [[ "${JOB}" == "api" ]]; then
+    set -euo pipefail
+    cd "${PACKAGE}"
+    if [[ "${PACKAGE}" == "api" ]]; then
         yarn run lint
         yarn test
         yarn run build
-    elif [[ "${JOB}" == "core" ]]; then
+    elif [[ "${PACKAGE}" == "core" ]]; then
         yarn test
     fi
     cd -
 env:
   matrix:
-    - JOB=api
-    - JOB=core
+    - PACKAGE=api
+    - PACKAGE=core
 cache: yarn
