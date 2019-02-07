@@ -39,8 +39,9 @@ class WebServer {
   }
 
   close() {
-    return new Promise((resolve) => {
-      this.server.close(() => {
+    return new Promise((resolve, reject) => {
+      this.server.close((error) => {
+        if (error != null) reject(error);
         console.log('👋  GCrypt API is gracefully shutting down');
         resolve();
       });
