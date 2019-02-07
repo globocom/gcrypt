@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019, Globo.com (https://github.com/globocom)
+ *
+ * License: MIT
+ */
+
 /* eslint-disable func-names */
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 
