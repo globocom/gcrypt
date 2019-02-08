@@ -14,6 +14,8 @@ class OpenIDConnectProvider {
   }
 
   get authorizationURL() {
+    console.log(this.redirectURL);
+
     return this.client.authorizationUrl({
       redirect_uri: this.redirectURL,
       scope: this.scopes,
@@ -30,7 +32,7 @@ class OpenIDConnectProvider {
       const clientID = command.authenticationOidcClientId;
       const clientSecret = command.authenticationOidcClientSecret;
       const scopes = command.authenticationOidcScopes;
-      const redirectURL = command.authenticationOidcRedirectURL;
+      const redirectURL = command.authenticationOidcRedirectUrl;
 
       Issuer.discover(url)
         .then((issuer) => {

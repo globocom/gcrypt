@@ -15,7 +15,7 @@ describe('OpenIDConnectProvider', () => {
         authenticationOidcUrl: 'https://oidc.example.com/auth/realms/myrealm',
         authenticationOidcClientId: 'example-client-id',
         authenticationOidcClientSecret: 'my client secret',
-        authenticationOidcScopes: 'email another',
+        authenticationOidcScopes: 'openid email',
         authenticationOidcRedirectUrl: 'https://api.gcrypt.example.com/auth/callback',
       };
 
@@ -28,7 +28,7 @@ describe('OpenIDConnectProvider', () => {
       const provider = await OpenIDConnectProvider.parseFromCommand(command);
 
       expect(provider).toHaveProperty('client');
-      expect(provider).toHaveProperty('authorizationURL', `${authorizationURL}?client_id=${command.authenticationOidcClientId}&scope=${querystring.escape(command.authenticationOidcScopes)}&response_type=code`);
+      expect(provider).toHaveProperty('authorizationURL', `${authorizationURL}?client_id=${command.authenticationOidcClientId}&scope=${querystring.escape(command.authenticationOidcScopes)}&response_type=code&redirect_uri=${querystring.escape(command.authenticationOidcRedirectUrl)}`);
     });
   });
 });
