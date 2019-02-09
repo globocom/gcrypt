@@ -6,12 +6,22 @@
 
 import dotenv from 'dotenv';
 
-import Routes from './web/routes';
 import App from './cmd/app';
+import AuthenticationProvider from './auth';
+import OpenIDConnectProvider from './auth/oidc';
+import Routes from './web/routes';
 import WebServer from './web/webserver';
 
-function main(cmd, options) {
+async function main(cmd, options) {
   const opts = typeof cmd === 'string' ? options : cmd;
+
+  const authenticationProvider = opts.authenticationMethod === 'oidc'
+    ? await OpenIDConnectProvider.parseFromCommand(opts)
+    : null;
+
+  if (authenticationProvider == null) throw new Error('authentication method not available');
+
+  AuthenticationProvider.set(authenticationProvider);
 
   const [address, port] = opts.webserverAddress.split(':');
   const certificate = opts.tlsCertificate;
