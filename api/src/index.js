@@ -27,10 +27,14 @@ async function main(cmd, options) {
   const certificate = opts.tlsCertificate;
   const key = opts.tlsKey;
 
-  const webserver = new WebServer(Routes, { address, port, certificate, key });
+  const webserverOptions = {
+    address, port, certificate, key,
+  };
+
+  const webserver = new WebServer(Routes, webserverOptions);
 
   const shutdownWebServer = () => webserver.close();
-  
+
   process.on('SIGINT', shutdownWebServer);
   process.on('SIGTERM', shutdownWebServer);
 
