@@ -22,6 +22,14 @@ class OpenIDConnectProvider {
     });
   }
 
+  authorizationCallback(url) {
+    const params = this.client.callbackParams(url);
+    params.state = params.session_state;
+    const checks = { state: params.state, response_type: 'code' };
+    return this.client
+      .authorizationCallback(this.redirectURL, params, checks);
+  }
+
   static parseFromCommand(command) {
     return new Promise((resolve, reject) => {
       if (command.authenticationMethod !== 'oidc') {

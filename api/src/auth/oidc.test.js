@@ -1,5 +1,7 @@
 import querystring from 'querystring';
 import nock from 'nock';
+import { Issuer } from 'openid-client';
+
 import OpenIDConnectProvider from './oidc';
 
 describe('OpenIDConnectProvider', () => {
@@ -30,5 +32,33 @@ describe('OpenIDConnectProvider', () => {
       expect(provider).toHaveProperty('client');
       expect(provider).toHaveProperty('authorizationURL', `${authorizationURL}?client_id=${command.authenticationOidcClientId}&scope=${querystring.escape(command.authenticationOidcScopes)}&response_type=code&redirect_uri=${querystring.escape(command.authenticationOidcRedirectUrl)}`);
     });
+  });
+
+  describe('#authorizationCallback', () => {
+    it('When invoked with OP parameters in query string, should call the exepcted methods with expected params', async () => {
+      const code = 'example-code';
+      const session_state = 'example-state';
+      const state = session_state;
+      const scopes = 'openid';
+      const redirectURL = 'https://api.gcrypt.globoi.com/auth/callback';
+      const url = `${redirectURL}?session_state=${session_state}&code=${code}`;
+
+      const callbackParams = jest.fn()
+        .mockReturnValue({ code, session_state });
+
+      const authorizationCallback = jest.fn();
+
+      const client = jest.fn()
+        .mockImplementation(() => ({ authorizationCallback, callbackParams }));
+
+      const provider = new OpenIDConnectProvider(new client(), { scopes, redirectURL });
+      await provider.authorizationCallback(url);
+
+      expect(provider.client.callbackParams)
+        .toBeCalledWith(url);
+
+      expect(provider.client.authorizationCallback)
+        .toBeCalledWith(redirectURL, { code, session_state, state }, { response_type: 'code', state });
+   });
   });
 });
