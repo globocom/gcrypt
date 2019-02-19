@@ -6,6 +6,8 @@
 
 import { Issuer } from 'openid-client';
 
+import { SessionToken } from './session';
+
 class OpenIDConnectProvider {
   constructor(client, { scopes, redirectURL }) {
     this.client = client;
@@ -27,7 +29,11 @@ class OpenIDConnectProvider {
     params.state = params.session_state;
     const checks = { state: params.state, response_type: 'code' };
     return this.client
-      .authorizationCallback(this.redirectURL, params, checks);
+      .authorizationCallback(this.redirectURL, params, checks)
+      .then(tokenSet => {
+        const { email, name } = tokenSet.claims;
+        return SessionToken.sign({ email, name });
+      });
   }
 
   static parseFromCommand(command) {

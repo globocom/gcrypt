@@ -8,12 +8,16 @@ import express from 'express';
 import morgan from 'morgan';
 import nocache from 'nocache';
 
+import authRouter from './auth';
+
 export default (() => {
   const app = express();
 
   app.disable('x-powered-by');
   app.use(nocache());
   app.use(morgan('tiny'));
+
+  app.use('/auth', authRouter);
 
   app.get('/health', (request, response) => {
     response.send('OK');

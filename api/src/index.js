@@ -12,6 +12,8 @@ import OpenIDConnectProvider from './auth/oidc';
 import Routes from './web/routes';
 import WebServer from './web/webserver';
 
+import { SessionOptions } from './auth/session';
+
 async function main(cmd, options) {
   const opts = typeof cmd === 'string' ? options : cmd;
 
@@ -22,6 +24,10 @@ async function main(cmd, options) {
   if (authenticationProvider == null) throw new Error('authentication method not available');
 
   AuthenticationProvider.set(authenticationProvider);
+
+  const { sessionExpiration, sessionSecret } = opts;
+
+  SessionOptions.set(new SessionOptions(sessionSecret, sessionExpiration));
 
   const [address, port] = opts.webserverAddress.split(':');
   const certificate = opts.tlsCertificate;

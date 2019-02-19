@@ -29,7 +29,7 @@ router.get('/callback', async (request, response) => {
 
   if (provider instanceof OpenIDConnectProvider) {
     const token = await provider.authorizationCallback(request.url);
-    return response.send(token);
+    return response.send({ token });
   }
 
   response.send(500);

@@ -1,8 +1,8 @@
 import querystring from 'querystring';
 import nock from 'nock';
-import { Issuer } from 'openid-client';
 
 import OpenIDConnectProvider from './oidc';
+import { SessionToken } from './session';
 
 describe('OpenIDConnectProvider', () => {
   describe('#parseFromCommand', () => {
@@ -43,10 +43,15 @@ describe('OpenIDConnectProvider', () => {
       const redirectURL = 'https://api.gcrypt.globoi.com/auth/callback';
       const url = `${redirectURL}?session_state=${session_state}&code=${code}`;
 
+      const userInfo = { name: 'example', email: 'example@example.com' };
+
+      SessionToken.sign = jest.fn();
+
       const callbackParams = jest.fn()
         .mockReturnValue({ code, session_state });
 
-      const authorizationCallback = jest.fn();
+      const authorizationCallback = jest.fn()
+        .mockReturnValue(Promise.resolve({ claims: userInfo }));
 
       const client = jest.fn()
         .mockImplementation(() => ({ authorizationCallback, callbackParams }));
@@ -59,6 +64,9 @@ describe('OpenIDConnectProvider', () => {
 
       expect(provider.client.authorizationCallback)
         .toBeCalledWith(redirectURL, { code, session_state, state }, { response_type: 'code', state });
+
+      expect(SessionToken.sign)
+        .toBeCalledWith(userInfo)
    });
   });
 });

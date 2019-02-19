@@ -20,6 +20,8 @@ class App extends Command {
       .option('--authentication-oidc-redirect-url [string]', 'OpenID Connect redirect URL. env: GCRYPT_AUTHENTICATION_OIDC_REDIRECT_URL')
       .option('--authentication-oidc-scopes [string]', 'OpenID Connect scopes. env: GCRYPT_AUTHENTICATION_OIDC_SCOPES', 'openid email')
       .option('--database-url <string>', 'MongoDB connection URL. env: GCRYPT_DATABASE_URL')
+      .option('--session-expiration [duration]', 'lifespan of a session expressed in seconds or duration ("2 days", i.e.). env: GCRYPT_SESSION_EXPIRATION', '1h')
+      .option('--session-secret <string>', 'secret data used to sign/verify the JWT. env: GCRYPT_SESSION_SECRET')
       .option('--tls-certificate [path]', 'certificate file. env: GCRYPT_TLS_CERTIFICATE')
       .option('--tls-key [path]', 'key file. env: GCRYPT_TLS_KEY')
       .option('--webserver-address [string]', 'address where the web server listen for connections. env: GCRYPT_WEBSERVER_ADDRESS', '127.0.0.1:8888');
@@ -36,6 +38,8 @@ class App extends Command {
     append('--authentication-oidc-scopes', process.env.GCRYPT_AUTHENTICATION_OIDC_SCOPES);
     append('--authentication-oidc-redirect-url', process.env.GCRYPT_AUTHENTICATION_OIDC_REDIRECT_URL);
     append('--database-url', process.env.GCRYPT_DATABASE_URL);
+    append('--session-expiration', process.env.GCRYPT_SESSION_EXPIRATION);
+    append('--session-secret', process.env.GCRYPT_SESSION_SECRET);
     append('--tls-certificate', process.env.GCRYPT_TLS_CERTIFICATE);
     append('--tls-key', process.env.GCRYPT_TLS_KEY);
     append('--webserver-address', process.env.GCRYPT_WEBSERVER_ADDRESS);
