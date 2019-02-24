@@ -34,6 +34,16 @@ class SessionToken {
       });
     });
   }
+
+  static verify(token) {
+    const options = SessionOptions.get();
+    return new Promise((resolve, reject) => {
+      const { algorithm, expiration, secret } = options;
+      jwt.verify(token, secret, { algorithm, expiresIn: expiration }, (error, token) => {
+        return error != null ? reject(error) : resolve(token);
+      });
+    });
+  }
 }
 
 export { SessionOptions, SessionToken };
