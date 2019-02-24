@@ -24,16 +24,22 @@ class OpenIDConnectProvider {
     });
   }
 
-  authorizationCallback(url) {
-    const params = this.client.callbackParams(url);
-    params.state = params.session_state;
-    const checks = { state: params.state, response_type: 'code' };
-    return this.client
-      .authorizationCallback(this.redirectURL, params, checks)
-      .then(tokenSet => {
-        const { email, name } = tokenSet.claims;
-        return SessionToken.sign({ email, name });
-      });
+  async authorizationCallback(url) {
+    try {
+      const params = this.client.callbackParams(url);
+      params.state = params.session_state;
+      const checks = { state: params.state, response_type: 'code' };
+
+      const tokenSet = await this.client.authorizationCallback(this.redirectURL, params, checks);
+      const { email, jti, name } = tokenSet.claims;
+
+      const token = await SessionToken.sign({ email, jti, name });
+      const claims = await SessionToken.verify(token);
+
+      return { claims, token };
+    } catch(error) {
+      throw new Error(`could not authorize the user by the provided URL: ${error}`);
+    }
   }
 
   static parseFromCommand(command) {

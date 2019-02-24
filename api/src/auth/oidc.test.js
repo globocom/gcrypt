@@ -35,29 +35,37 @@ describe('OpenIDConnectProvider', () => {
   });
 
   describe('#authorizationCallback', () => {
+    const
+      code = 'example-code',
+      session_state = 'example-state',
+      scopes = 'openid email',
+      state = session_state,
+      redirectURL = 'https://api.gcrypt.example.com/auth/callback',
+      url = `${redirectURL}?session_state=${session_state}&code=${code}`,
+      userInfo = { name: 'example', email: 'example@example.com', jti: 'example-jti' },
+      token = 'example-jwt',
+      claims = { exp: 1551044090, iat: 1551044090, ...userInfo };
+
+    beforeEach(() => {
+      SessionToken.sign = jest.fn()
+        .mockResolvedValue(token);
+
+      SessionToken.verify = jest.fn()
+        .mockResolvedValue(claims);
+    });
+
     it('When invoked with OP parameters in query string, should call the exepcted methods with expected params', async () => {
-      const code = 'example-code';
-      const session_state = 'example-state';
-      const state = session_state;
-      const scopes = 'openid';
-      const redirectURL = 'https://api.gcrypt.globoi.com/auth/callback';
-      const url = `${redirectURL}?session_state=${session_state}&code=${code}`;
-
-      const userInfo = { name: 'example', email: 'example@example.com' };
-
-      SessionToken.sign = jest.fn();
-
       const callbackParams = jest.fn()
         .mockReturnValue({ code, session_state });
 
       const authorizationCallback = jest.fn()
-        .mockReturnValue(Promise.resolve({ claims: userInfo }));
+        .mockResolvedValue({ claims: userInfo });
 
-      const client = jest.fn()
+      const Client = jest.fn()
         .mockImplementation(() => ({ authorizationCallback, callbackParams }));
 
-      const provider = new OpenIDConnectProvider(new client(), { scopes, redirectURL });
-      await provider.authorizationCallback(url);
+      const provider = new OpenIDConnectProvider(new Client(), { scopes, redirectURL });
+      const result = await provider.authorizationCallback(url);
 
       expect(provider.client.callbackParams)
         .toBeCalledWith(url);
@@ -66,7 +74,26 @@ describe('OpenIDConnectProvider', () => {
         .toBeCalledWith(redirectURL, { code, session_state, state }, { response_type: 'code', state });
 
       expect(SessionToken.sign)
-        .toBeCalledWith(userInfo)
-   });
+        .toBeCalledWith(userInfo);
+
+      expect(SessionToken.verify)
+        .toBeCalledWith(token);
+
+      expect(result).toEqual({ claims, token });
+    });
+
+    it('When the authorizationCallback method of the OIDC provider is rejected, should thrown an error', () => {
+      const callbackParams = jest.fn()
+        .mockReturnValue({ code, session_state });
+
+      const authorizationCallback = jest.fn()
+        .mockRejectedValue(new Error('the provided code is invalid'));
+
+      const Client = jest.fn()
+        .mockImplementation(() => ({ authorizationCallback, callbackParams }));
+
+      const provider = new OpenIDConnectProvider(new Client(), { scopes, redirectURL });
+      expect(provider.authorizationCallback(url)).rejects.toThrow();
+    });
   });
 });
