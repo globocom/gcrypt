@@ -15,7 +15,9 @@ export default (() => {
 
   app.disable('x-powered-by');
   app.use(nocache());
-  app.use(morgan('tiny'));
+  app.use(morgan('short'));
+
+  morgan.token('remote-user', request => request.jti || 'anonymous');
 
   app.use('/auth', authRouter);
 

@@ -37,7 +37,7 @@ class OpenIDConnectProvider {
       const claims = await SessionToken.verify(token);
 
       return { claims, token };
-    } catch(error) {
+    } catch (error) {
       throw new Error(`could not authorize the user by the provided URL: ${error}`);
     }
   }

@@ -29,19 +29,18 @@ class SessionToken {
     const options = SessionOptions.get();
     return new Promise((resolve, reject) => {
       const { algorithm, expiration, secret } = options;
-      jwt.sign(data, secret, { algorithm, expiresIn: expiration }, (error, token) => {
-        return error != null ? reject(error) : resolve(token);
-      });
+      const callback = (error, token) => (error != null ? reject(error) : resolve(token));
+      jwt.sign(data, secret, { algorithm, expiresIn: expiration }, callback);
     });
   }
 
-  static verify(token) {
+  static verify(rawToken) {
     const options = SessionOptions.get();
     return new Promise((resolve, reject) => {
       const { algorithm, expiration, secret } = options;
-      jwt.verify(token, secret, { algorithm, expiresIn: expiration }, (error, token) => {
-        return error != null ? reject(error) : resolve(token);
-      });
+      const verifyOptions = { algorithm, expiresIn: expiration };
+      const callback = (error, token) => (error != null ? reject(error) : resolve(token));
+      jwt.verify(rawToken, secret, verifyOptions, callback);
     });
   }
 }

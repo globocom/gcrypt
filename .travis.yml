@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "node"
+  - node
 install: yarn --cwd "${PACKAGE}" install
 script: yarn --cwd "${PACKAGE}" run ci
 env:
@@ -8,3 +8,5 @@ env:
     - PACKAGE=api
     - PACKAGE=core
 cache: yarn
+services:
+  - mongodb

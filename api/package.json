@@ -10,6 +10,7 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.14",
     "morgan": "^1.9.1",
     "nocache": "^2.0.0",
     "openid-client": "^2.4.5"
@@ -39,5 +40,8 @@
     "start": "yarn run build && node ./dist/index.js",
     "start/dev": "nodemon ./src/index.js --exec babel-node",
     "test": "jest --coverage --verbose --env node ./src"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./src/jest.setup.js"
   }
 }

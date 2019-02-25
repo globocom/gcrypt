@@ -4,6 +4,8 @@ import supertest from 'supertest';
 import AuthenticationProvider from '../../auth';
 import AuthRouter from './auth';
 import OpenIDConnectProvider from '../../auth/oidc';
+import Token from '../../db/model/token';
+import { SessionOptions, SessionToken } from '../../auth/session';
 
 describe('/auth', () => {
   const app = express();
@@ -11,6 +13,7 @@ describe('/auth', () => {
 
   beforeEach(() => {
     AuthenticationProvider.set(undefined);
+    SessionOptions.set(undefined);
   });
 
   describe('GET /scheme', () => {
@@ -50,8 +53,14 @@ describe('/auth', () => {
     });
 
     it('When using OIDC authentication method, shoud call expected method and return 200', async () => {
+      const claims = {
+        jti: 'example-jti', email: 'email@example.com', exp: new Date(), iat: new Date(),
+      };
+      const token = 'my-awesome-token';
+
       const provider = new OpenIDConnectProvider({}, {});
-      provider.authorizationCallback = jest.fn();
+      provider.authorizationCallback = jest.fn()
+        .mockResolvedValue({ claims, token });
 
       AuthenticationProvider.set(provider);
 
@@ -59,7 +68,22 @@ describe('/auth', () => {
         .get('/auth/callback?session_state=example&code=example')
         .expect(200);
 
-      expect(provider.authorizationCallback).toBeCalled();
+      expect(provider.authorizationCallback)
+        .toHaveBeenCalled();
+    });
+  });
+
+  describe('DELETE /logout', () => {
+    it('When the client provides an valid token, should return 204', async () => {
+      SessionOptions.set(new SessionOptions('example-secret', '1 day'));
+      const claims = { jti: 'my-awesome-jti', email: 'email@example.com' };
+      await Token.create({ iat: 1551200056, exp: 1551201496, ...claims });
+      const token = await SessionToken.sign(claims);
+
+      await supertest(app)
+        .delete('/auth/logout')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204);
     });
   });
 });

@@ -5,17 +5,23 @@
  */
 
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 import App from './cmd/app';
 import AuthenticationProvider from './auth';
 import OpenIDConnectProvider from './auth/oidc';
 import Routes from './web/routes';
 import WebServer from './web/webserver';
-
 import { SessionOptions } from './auth/session';
 
 async function main(cmd, options) {
   const opts = typeof cmd === 'string' ? options : cmd;
+
+  try {
+    await mongoose.connect(opts.databaseUrl, { useCreateIndex: true, useNewUrlParser: true });
+  } catch (error) {
+    throw new Error(`could not connect with MongoDB instances: ${error}`);
+  }
 
   const authenticationProvider = opts.authenticationMethod === 'oidc'
     ? await OpenIDConnectProvider.parseFromCommand(opts)

@@ -6,12 +6,15 @@
 
 import { Router } from 'express';
 
+import { tokenAuthentication } from './middlewares';
+
 import AuthenticationProvider from '../../auth';
 import OpenIDConnectProvider from '../../auth/oidc';
+import Token from '../../db/model/token';
 
 const router = new Router();
 
-router.get('/scheme', (request, response) => {
+router.get('/scheme', (_, response) => {
   const provider = AuthenticationProvider.get();
 
   if (provider instanceof OpenIDConnectProvider) {
@@ -21,18 +24,37 @@ router.get('/scheme', (request, response) => {
     });
   }
 
-  response.send(500);
+  return response.sendStatus(500);
 });
 
 router.get('/callback', async (request, response) => {
   const provider = AuthenticationProvider.get();
 
-  if (provider instanceof OpenIDConnectProvider) {
-    const token = await provider.authorizationCallback(request.url);
-    return response.send({ token });
+  if (!(provider instanceof OpenIDConnectProvider)) {
+    return response.sendStatus(500);
   }
 
-  response.send(500);
+  try {
+    const { claims, token } = await provider.authorizationCallback(request.url);
+    await Token.create(claims);
+    return response.send({ token });
+  } catch (error) {
+    console.error(error);
+    return response.sendStatus(500);
+  }
+});
+
+router.delete('/logout', tokenAuthentication, async (request, response) => {
+  const { jti } = request;
+
+  try {
+    const token = await Token.findByJTI(jti);
+    await token.revoke();
+    return response.sendStatus(204);
+  } catch (error) {
+    console.error(error);
+    return response.sendStatus(500);
+  }
 });
 
 export default router;

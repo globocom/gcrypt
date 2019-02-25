@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import querystring from 'querystring';
 import nock from 'nock';
 
@@ -35,16 +37,15 @@ describe('OpenIDConnectProvider', () => {
   });
 
   describe('#authorizationCallback', () => {
-    const
-      code = 'example-code',
-      session_state = 'example-state',
-      scopes = 'openid email',
-      state = session_state,
-      redirectURL = 'https://api.gcrypt.example.com/auth/callback',
-      url = `${redirectURL}?session_state=${session_state}&code=${code}`,
-      userInfo = { name: 'example', email: 'example@example.com', jti: 'example-jti' },
-      token = 'example-jwt',
-      claims = { exp: 1551044090, iat: 1551044090, ...userInfo };
+    const code = 'example-code';
+    const session_state = 'example-state';
+    const scopes = 'openid email';
+    const state = session_state;
+    const redirectURL = 'https://api.gcrypt.example.com/auth/callback';
+    const url = `${redirectURL}?session_state=${session_state}&code=${code}`;
+    const userInfo = { name: 'example', email: 'example@example.com', jti: 'example-jti' };
+    const token = 'example-jwt';
+    const claims = { exp: 1551044090, iat: 1551044090, ...userInfo };
 
     beforeEach(() => {
       SessionToken.sign = jest.fn()
@@ -68,16 +69,16 @@ describe('OpenIDConnectProvider', () => {
       const result = await provider.authorizationCallback(url);
 
       expect(provider.client.callbackParams)
-        .toBeCalledWith(url);
+        .toHaveBeenCalledWith(url);
 
       expect(provider.client.authorizationCallback)
-        .toBeCalledWith(redirectURL, { code, session_state, state }, { response_type: 'code', state });
+        .toHaveBeenCalledWith(redirectURL, { code, session_state, state }, { response_type: 'code', state });
 
       expect(SessionToken.sign)
-        .toBeCalledWith(userInfo);
+        .toHaveBeenCalledWith(userInfo);
 
       expect(SessionToken.verify)
-        .toBeCalledWith(token);
+        .toHaveBeenCalledWith(token);
 
       expect(result).toEqual({ claims, token });
     });

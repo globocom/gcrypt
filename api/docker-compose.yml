@@ -1,0 +1,18 @@
+version: '2.3'
+
+services:
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      KEYCLOAK_USER: gcrypt
+      KEYCLOAK_PASSWORD: gcrypt
+    ports:
+      - 8080:8080
+
+  database:
+    image: mongo:4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gcrypt
+      MONGO_INITDB_ROOT_PASSWORD: gcrypt
+    ports:
+      - 27017:27017
