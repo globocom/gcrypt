@@ -28,3 +28,5 @@ Check our [wiki](https://github.com/globocom/gcrypt/wiki).
 ## License
 
 This project is licensed under the MIT License - read [LICENSE.md](LICENSE.md) file for details.
+
+*This article can also be read in [Brazilian Portuguese](README-pt-BR.md).*
